@@ -27,10 +27,9 @@ WORKDIR ${GCSFUSE_REPO}
 RUN go install ./tools/build_gcsfuse
 RUN build_gcsfuse . /tmp $(git log -1 --format=format:"%H")
 
-FROM alpine:3.13
+FROM itadventurer/kafka-backup
 
 RUN apk add --update --no-cache bash ca-certificates fuse
 
 COPY --from=builder /tmp/bin/gcsfuse /usr/local/bin/gcsfuse
 COPY --from=builder /tmp/sbin/mount.gcsfuse /usr/sbin/mount.gcsfuse
-ENTRYPOINT ["gcsfuse", "-o", "allow_other", "--foreground", "--implicit-dirs", "/gcs"]
